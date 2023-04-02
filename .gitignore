@@ -1,0 +1,6 @@
+.phpbench/
+.tmp/
+.idea/
+vendor/
+
+.env
