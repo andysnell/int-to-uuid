@@ -1,9 +1,9 @@
-name: PHPUnit Tests
+name: Unit Tests
 on: [push, pull_request]
 
 jobs:
   phpunit:
-    name: PHPUnit Tests on ${{ matrix.php }}
+    name: PHPUnit on ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,4 +23,4 @@ jobs:
         uses: ramsey/composer-install@v2
 
       - name: Run PHPUnit
-        run: php -dextension=pcov.so -dpcov.enabled=1 -dpcov.directory=src vendor/bin/phpunit --coverage-text
+        run: vendor/bin/phpunit --coverage-text

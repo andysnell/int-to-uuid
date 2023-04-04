@@ -1,9 +1,9 @@
-name: PHPStan Static Analysis
+name: Static Analysis
 on: [push, pull_request]
 
 jobs:
   phpstan:
-    name: PHPStan Analysis on (${{ matrix.php }})
+    name: PHPStan on (${{ matrix.php }})
     runs-on: ubuntu-latest
     strategy:
       matrix:

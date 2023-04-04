@@ -27,3 +27,7 @@ USER dev
 FROM base as php82-xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 USER dev
+
+FROM base as php82-pcov
+RUN pecl install pcov && docker-php-ext-enable pcov
+USER dev

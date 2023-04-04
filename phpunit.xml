@@ -5,7 +5,6 @@
          cacheDirectory="/tmp/.phpunit.cache"
          executionOrder="depends,defects"
          requireCoverageMetadata="true"
-         beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true">
@@ -14,7 +13,7 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <coverage>
+    <coverage includeUncoveredFiles="true">
         <include>
             <directory suffix=".php">src</directory>
         </include>

@@ -1,4 +1,4 @@
-name: PHP_CodeSniffer Style & Linting
+name: Code Style & Linting
 on: [push, pull_request]
 
 jobs:
