@@ -18,7 +18,7 @@ final readonly class IntegerId
 
     /**
      * @phpstan-assert int<0,max> $value
-     * @phpstan-assert int<0,262143> $namespace
+     * @phpstan-assert int<0,4294967295> $namespace
      */
     private function __construct(
         public int $value,
