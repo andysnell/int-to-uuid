@@ -1,0 +1,26 @@
+name: PHPUnit Tests
+on: [push, pull_request]
+
+jobs:
+  phpunit:
+    name: PHPUnit Tests on ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.2']
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install PHP and Extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Install Composer Dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Run PHPUnit
+        run: php -dextension=pcov.so -dpcov.enabled=1 -dpcov.directory=src vendor/bin/phpunit --coverage-text

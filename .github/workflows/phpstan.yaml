@@ -1,0 +1,26 @@
+name: PHPStan Static Analysis
+on: [push, pull_request]
+
+jobs:
+  phpstan:
+    name: PHPStan Analysis on (${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.2']
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install PHP and Extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Install Composer Dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan
