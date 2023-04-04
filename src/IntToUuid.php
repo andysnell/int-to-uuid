@@ -27,8 +27,8 @@ final readonly class IntToUuid
         $namespace = \pack(self::INT32_UNSIGNED_BE, $integer_id->namespace);
         $seed = self::seed($id, $namespace);
 
-        $id ^= \sodium_crypto_generichash($namespace . $seed);
-        $namespace ^= \sodium_crypto_generichash($seed);
+        $id ^= self::hash($namespace . $seed);
+        $namespace ^= self::hash($seed);
 
         return Uuid::fromBytes($namespace . \substr($id, 0, 2) . $seed . \substr($id, 2));
     }
@@ -45,8 +45,9 @@ final readonly class IntToUuid
         $namespace = \substr($bytes, 0, 4);
         $id = \substr($bytes, 4, 2) . \substr($bytes, 10);
 
-        $namespace ^= \sodium_crypto_generichash($seed);
-        $id ^= \sodium_crypto_generichash($namespace . $seed);
+        $namespace ^= self::hash($seed);
+        $id ^= self::hash($namespace . $seed);
+
         if (self::seed($id, $namespace) !== $seed) {
             throw new LogicException("UUID Could Not Be Decoded Successfully");
         }
@@ -54,9 +55,14 @@ final readonly class IntToUuid
         return IntegerId::make(self::unpackInt64($id), self::unpackInt32($namespace));
     }
 
+    private static function hash(string $message): string
+    {
+        return \hash('xxh3', $message, true);
+    }
+
     private static function seed(string $packed_id, string $packed_namespace): string
     {
-        $hash = \sodium_crypto_generichash($packed_id . $packed_namespace);
+        $hash = self::hash($packed_id . $packed_namespace);
         $seed = self::unpackInt32(\substr($hash, 0, 4));
         return \pack(self::INT32_UNSIGNED_BE, $seed & 0x0FFF3FFF | 0x80008000);
     }
