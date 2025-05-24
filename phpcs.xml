@@ -1,76 +1,16 @@
 <?xml version="1.0"?>
-
-<ruleset name="PhoneBurner Open Source Coding Standard">
-    <config name="installed_paths" value="../../slevomat/coding-standard"/>
-    <config name="php_version" value="80200"/>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
     <arg name="report" value="full"/>
+    <arg name="cache" value="build/phpcs"/>
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
-    <arg value="sp"/>
-    <ini name="memory_limit" value="1G"/>
-
-    <!-- Include All PHP Files Under Version Control -->
-    <file>benchmarks/</file>
-    <file>src/</file>
-    <file>tests/</file>
-
-    <rule ref="PSR12">
-        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-            <exclude-pattern>^/var/www/html/tests/*</exclude-pattern>
-        </exclude>
-        <!-- Temporarily Exclude FoundWithSymbols Sniff Due to PHP Code_Sniffer Bug -->
-        <!-- See: https://github.com/squizlabs/PHP_CodeSniffer/issues/3727 -->
-        <!-- See: https://github.com/squizlabs/PHP_CodeSniffer/pull/3728 -->
-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+    <arg value="spn"/>
+    <ini name="memory_limit" value="-1"/>
+    <file>benchmarks</file>
+    <file>src</file>
+    <file>tests</file>
+    <file>rector.php</file>
+    <rule ref="WickedByte">
     </rule>
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.Formatting.NoSpaceAfterCast"/>
-    <rule ref="Generic.Formatting.SpaceAfterNot"/>
-    <rule ref="Generic.PHP.SAPIUsage"/>
-    <rule ref="Generic.PHP.Syntax"/>
-    <rule ref="Generic.WhiteSpace.SpreadOperatorSpacingAfter"/>
-    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
-    <rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.ClassStructure">
-        <properties>
-            <property name="groups" type="array">
-                <element value="uses"/>
-                <element value="enum cases"/>
-                <element value="constants, properties, methods"/>
-            </property>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Classes.ConstantSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.MethodSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
-    <rule ref="SlevomatCodingStandard.Classes.PropertySpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
-    <rule ref="SlevomatCodingStandard.Classes.TraitUseDeclaration"/>
-    <rule ref="SlevomatCodingStandard.Classes.UselessLateStaticBinding"/>
-    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing"/>
-    <rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
-    <rule ref="SlevomatCodingStandard.ControlStructures.LanguageConstructWithParentheses"/>
-    <rule ref="SlevomatCodingStandard.Functions.StrictCall"/>
-    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
-    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
-    <rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
-    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
-        <properties>
-            <property name="searchAnnotations" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.PHP.DisallowDirectMagicInvokeCall"/>
-    <rule ref="SlevomatCodingStandard.PHP.OptimizedFunctionsWithoutUnpacking"/>
-    <rule ref="SlevomatCodingStandard.PHP.TypeCast"/>
-    <rule ref="SlevomatCodingStandard.PHP.UselessSemicolon"/>
-    <rule ref="SlevomatCodingStandard.PHP.DisallowDirectMagicInvokeCall"/>
-    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
-        <properties>
-            <property name="linesCountBeforeDeclare" value="1"/>
-            <property name="linesCountAfterDeclare" value="1"/>
-            <property name="spacesCountAroundEqualsSign" value="0"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces"/>
 </ruleset>

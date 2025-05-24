@@ -1,8 +1,31 @@
 includes:
-	- phar://phpstan.phar/conf/bleedingEdge.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon
 parameters:
     level: max
+    tmpDir: build/phpstan
     paths:
         - benchmarks
         - src
         - tests
+        - rector.php
+    additionalConstructors:
+        - WickedByte\Benchmarks\IntToUuid\IntToUuidBench::setUpDecode
+        - WickedByte\Benchmarks\IntToUuid\IntToUuidBench::setUpEncodeAndDecode
+    treatPhpDocTypesAsCertain: false
+    checkDynamicProperties: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkImplicitMixed: true
+    checkInternalClassCaseSensitivity: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportMaybesInMethodSignatures: true
+    reportMaybesInPropertyPhpDocTypes: true
+    reportStaticMethodSignatures: true
+    reportUnmatchedIgnoredErrors: false
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportAlwaysTrueInLastCondition: true
+    reportWrongPhpDocTypeInVarTag: true
+    reportAnyTypeWideningInVarTag: true
+    checkMissingOverrideMethodAttribute: true

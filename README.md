@@ -26,16 +26,16 @@ scope of this library.
 #### Encode ID with Default Namespace (0) to UUID
 
 ```php
-$id = \PhoneBurner\IntToUuid\IntegerId::make(12);
-$uuid = \PhoneBurner\IntToUuid\IntToUuid::encode($id);
+$id = \WickedByte\IntToUuid\IntegerId::make(12);
+$uuid = \WickedByte\IntToUuid\IntToUuid::encode($id);
 echo $uuid->toString(); // 14228ed0-822c-8d5d-b9c3-30d2a75c0e10
 ```
 
 #### Encode ID with Namespace to UUID
 
 ```php
-$id = \PhoneBurner\IntToUuid\IntegerId::make(42, 12);
-$uuid = \PhoneBurner\IntToUuid\IntToUuid::encode($id);
+$id = \WickedByte\IntToUuid\IntegerId::make(42, 12);
+$uuid = \WickedByte\IntToUuid\IntToUuid::encode($id);
 echo $uuid->toString(); // 97ed98ee-0994-8f79-b993-bcb7a2905968
 ```
 
@@ -43,7 +43,7 @@ echo $uuid->toString(); // 97ed98ee-0994-8f79-b993-bcb7a2905968
 
 ```php
 $uuid = \Ramsey\Uuid\Uuid::fromString('97ed98ee-0994-8f79-b993-bcb7a2905968');
-$id = \PhoneBurner\IntToUuid\IntToUuid::decode($uuid);
+$id = \WickedByte\IntToUuid\IntToUuid::decode($uuid);
 echo $id->value; // 42
 echo $id->namespace; // 12
 ```
