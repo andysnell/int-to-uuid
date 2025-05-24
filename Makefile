@@ -1,47 +1,87 @@
 SHELL := bash
+.DEFAULT_GOAL := vendor
 
-dcr = docker compose run --rm php82
-dcrx = docker compose run --rm php82-xdebug
+app = docker compose run --rm php
 
-.PHONY: build
+# The build target dependencies must be set as "order-only" prerequisites to prevent
+# the target from being rebuilt everytime the dependencies are updated.
 build:
-	@docker compose build
-	@$(dcr) composer install
+	@docker compose build --pull
+	@$(app) composer install
+	@$(app) mkdir --parents build
+	@touch build
+
+.PHONY: vendor
+vendor: build
+	@$(app) composer install
 
 .PHONY: clean
 clean:
-	@$(dcr) rm -rf ./.phpbench
-	@$(dcr) rm -rf ./.tmp
-	@$(dcr) rm -rf ./vendor
+	$(app) rm -rf ./build ./vendor
 
-.PHONY: shell
-shell:
-	@$(dcr) bash
+.PHONY: up
+up:
+	docker compose up --detach
 
-.PHONY: composer
-composer:
-	@$(dcr) composer install
+.PHONY: down
+down:
+	docker compose down --remove-orphans
 
-.PHONY: phpunit
-phpunit:
-	@$(dcr) vendor/bin/phpunit
+.PHONY: bash
+bash: build
+	@$(app) bash
 
-.PHONY: phpbench
-phpbench:
-	@$(dcr) vendor/bin/phpbench run --report=aggregate
+.PHONY: lint
+lint: build
+	@$(app) composer run-script lint
 
-.PHONY: psysh
-psysh:
-	@$(dcrx) vendor/bin/psysh
+# Run tests, aliased to "phpunit" for consistency with other tooling targets.
+.PHONY: test phpunit
+phpunit: test
+test: build
+	@$(app) composer run-script test
+
+# Generate HTML PHPUnit test coverage report, aliased to "phpunit-coverage" for consistency with other tooling targets.
+.PHONY: test-coverage phpunit-coverage
+phpunit-coverage: test-coverage
+test-coverage: build
+	@$(app) composer run-script test-coverage
+
+# Run the PHP development server to serve the HTML test coverage report on port 8000.
+.PHONY: serve-coverage
+serve-coverage:
+	@docker compose run --rm --publish 8000:80 php php -S 0.0.0.0:80 -t /app/build/phpunit
 
 .PHONY: phpcs
-phpcs:
-	@$(dcr) vendor/bin/phpcs
+phpcs: build
+	@$(app) composer run-script phpcs
 
-.PHONY: phpcs
-phpcbf:
-	@$(dcr) vendor/bin/phpcbf
+.PHONY: phpcbf
+phpcbf: build
+	@$(app) composer run-script phpcbf
 
 .PHONY: phpstan
-phpstan:
-	@$(dcr) vendor/bin/phpstan
+phpstan: build
+	@$(app) composer run-script phpstan
+
+.PHONY: rector
+rector: build
+	@$(app) composer run-script rector
+
+.PHONY: rector-dry-run
+rector-dry-run: build
+	@$(app) composer run-script rector-dry-run
+
+# Runs all the code quality checks: lint, phpstan, phpcs, and rector-dry-run".
+.PHONY: ci
+ci: build
+	@$(app) composer run-script ci
+
+# Runs the automated fixer tools, then run the code quality checks in one go, aliased to "preci".
+.PHONY: pre-ci preci
+preci: pre-ci
+pre-ci: build phpcbf rector ci
+
+.PHONY: phpbench
+phpbench: build
+	@$(app) vendor/bin/phpbench run --report=aggregate

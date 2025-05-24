@@ -1,71 +1,23 @@
 name: Code Quality
 on: [push, pull_request]
-
 jobs:
-  phpcs:
-    name: PHP ${{ matrix.php }} - PHP_CodeSniffer
-    runs-on: ubuntu-latest
+  ci:
+    name: PHP ${{ matrix.php }}
     strategy:
       matrix:
-        php: ['8.2']
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install PHP and Extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer:v2
-
-      - name: Install Composer Dependencies
-        uses: ramsey/composer-install@v2
-
-      - name: Run PHP_CodeSniffer
-        run: vendor/bin/phpcs
-
-  phpstan:
-    name: PHP ${{ matrix.php }} - PHPStan
+        php: [ '8.3', '8.4' ]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ['8.2']
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install PHP and Extensions
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
         with:
-          php-version: ${{ matrix.php }}
-          coverage: pcov
-          tools: composer:v2
-
-      - name: Install Composer Dependencies
-        uses: ramsey/composer-install@v2
-
-      - name: Run PHPStan
-        run: vendor/bin/phpstan --no-progress --no-ansi
-
-  phpunit:
-    name: PHP ${{ matrix.php }} - PHPUnit
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ['8.2']
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install PHP and Extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: pcov
-          tools: composer:v2
-
-      - name: Install Composer Dependencies
-        uses: ramsey/composer-install@v2
-
-      - name: Run PHPUnit
-        run: vendor/bin/phpunit --no-progress --coverage-text
+          context: .
+          file: ./Dockerfile
+          tags: int-to-uuid-integration:${{ matrix.php }}
+          build-args: PHP_VERSION=${{ matrix.php }}
+          load: true
+          pull: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - run: docker run --rm int-to-uuid-integration:${{ matrix.php }} composer run-script ci

@@ -26,16 +26,16 @@ scope of this library.
 #### Encode ID with Default Namespace (0) to UUID
 
 ```php
-$id = \PhoneBurner\IntToUuid\IntegerId::make(12);
-$uuid = \PhoneBurner\IntToUuid\IntToUuid::encode($id);
+$id = \WickedByte\IntToUuid\IntegerId::make(12);
+$uuid = \WickedByte\IntToUuid\IntToUuid::encode($id);
 echo $uuid->toString(); // 14228ed0-822c-8d5d-b9c3-30d2a75c0e10
 ```
 
 #### Encode ID with Namespace to UUID
 
 ```php
-$id = \PhoneBurner\IntToUuid\IntegerId::make(42, 12);
-$uuid = \PhoneBurner\IntToUuid\IntToUuid::encode($id);
+$id = \WickedByte\IntToUuid\IntegerId::make(42, 12);
+$uuid = \WickedByte\IntToUuid\IntToUuid::encode($id);
 echo $uuid->toString(); // 97ed98ee-0994-8f79-b993-bcb7a2905968
 ```
 
@@ -43,7 +43,7 @@ echo $uuid->toString(); // 97ed98ee-0994-8f79-b993-bcb7a2905968
 
 ```php
 $uuid = \Ramsey\Uuid\Uuid::fromString('97ed98ee-0994-8f79-b993-bcb7a2905968');
-$id = \PhoneBurner\IntToUuid\IntToUuid::decode($uuid);
+$id = \WickedByte\IntToUuid\IntToUuid::decode($uuid);
 echo $id->value; // 42
 echo $id->namespace; // 12
 ```
@@ -108,9 +108,9 @@ UUID.
 The other UUID versions defined by RFC 4122 have distinct generation algorithms
 and properties. Versions 1, 2, 6, and 7 are based on the current timestamp.
 Version 3 (Name-Based MD5) and Version 5 (Name-Based SHA1) are deterministic
-for a string "name" and "namespace" values, but are unidirectional,
+for a string "name" and "namespace" values, but are unidirectional
 because they are based on hash functions. Version 4 (Random) comes the closest
-to fulfilling our needs -- 122 of the 128 bits are randomly/pseudo-randomly
+to fulfilling our needs: 122 of the 128 bits are randomly/pseudo-randomly
 generated. The same algorithm used here _could_ be used to generate encoded
 UUIDs that _look_ like Version 4 UUIDs, but they would not be technically
 compatible with the RFC definition, or have the expected universal uniqueness

@@ -1,6 +1,6 @@
-.phpbench/
-.tmp/
-.idea/
-vendor/
-
+.cursor/
 .env
+.idea/
+.phpbench/
+build/
+vendor/

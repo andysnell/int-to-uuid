@@ -1,35 +1,14 @@
 services:
-  php82:
+  php:
     build:
       context: ./
       dockerfile: Dockerfile
-      target: php82
-    shm_size: '1gb'
-    tmpfs:
-      - /tmp
+      target: development
+    platform: linux/amd64
     volumes:
-      - type: bind
-        source: ./
-        target: /app
-        bind:
-          create_host_path: true
-      - type: bind
-        source: ./settings.ini
-        target: /usr/local/etc/php/conf.d/settings.ini
-    user: dev
-
-  php82-xdebug:
-    extends:
-      service: php82
-    build:
-      target: php82-xdebug
+      - ${SOURCE_DIR:-./}:/app
     environment:
-      PHP_IDE_CONFIG: "serverName=cli"
-      XDEBUG_CONFIG: "client_host=${CLIENT_HOST:-172.20.0.1} start_with_request=trigger idekey=${IDEKEY:-PHPSTORM}"
-      XDEBUG_MODE: "${XDEBUG_MODE:-develop,debug}"
-
-  php82-pcov:
-    extends:
-      service: php82
-    build:
-      target: php82-pcov
+      XDEBUG_MODE: "${XDEBUG_MODE:-debug}"
+      XDEBUG_CONFIG: "${XDEBUG_CONFIG:-client_host=host.docker.internal start_with_request=trigger idekey=PHPSTORM output_dir=/app/build/xdebug}"
+    extra_hosts:
+      - host.docker.internal:host-gateway

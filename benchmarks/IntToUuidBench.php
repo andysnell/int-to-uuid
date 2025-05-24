@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PhoneBurner\Benchmarks\IntToUuid;
+namespace WickedByte\Benchmarks\IntToUuid;
 
-use PhoneBurner\IntToUuid\IntegerId;
-use PhoneBurner\IntToUuid\IntToUuid;
 use PhpBench\Attributes\BeforeMethods;
 use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Subject;
 use Ramsey\Uuid\UuidInterface;
+use WickedByte\IntToUuid\IntegerId;
+use WickedByte\IntToUuid\IntToUuid;
 
 #[Revs(100_000)]
 #[Iterations(5)]
@@ -40,7 +40,7 @@ class IntToUuidBench
 
     #[Subject]
     #[BeforeMethods('setUpEncodeAndDecode')]
-    public function encode_and_decode(): void
+    public function encodeAndDecode(): void
     {
         $uuid = IntToUuid::encode($this->id);
         $id = IntToUuid::decode($uuid);

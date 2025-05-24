@@ -1,33 +1,45 @@
-# syntax=docker/dockerfile:1.4
-FROM php:8.2-cli as base
+# syntax=docker/dockerfile:1
+ARG PHP_VERSION=8.4
+FROM php:${PHP_VERSION}-cli AS base
+ENV COMPOSER_HOME="/app/build/composer"
+ENV PATH="/app/bin:/app/vendor/bin:/app/build/composer/bin:$PATH"
+ENV PHP_PEAR_PHP_BIN="php -d error_reporting=E_ALL&~E_DEPRECATED"
+ENV XDEBUG_MODE="debug"
 WORKDIR /app
-ENV PATH /app/bin:/app/vendor/bin::/home/dev/.composer/vendor/bin/:$PATH
-RUN groupadd --gid 1000 dev && useradd --system --create-home --uid 1000 --gid 1000 --shell /bin/bash dev
-COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
-RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    autoconf  \
-    build-essential \
-    git \
-    libgmp-dev \
-    libicu-dev \
-    libzip-dev \
-    libsodium-dev \
-    pkg-config \
-    unzip \
-    zip \
-    zlib1g-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install -j$(nproc) bcmath gmp intl opcache zip
 
-FROM base as php82
+RUN --mount=type=cache,target=/var/lib/apt --mount=type=tmpfs,target=/tmp/pear <<-EOF
+  set -eux
+  # Create a non-root user to run the application
+  groupadd --gid 1000 dev
+  useradd --uid 1000 --gid 1000 --groups www-data --shell /bin/bash dev
+  chown -R 1000:1000 /app
+
+  # Update and Install System Dependencies
+  apt-get update
+  apt-get dist-upgrade --yes
+  apt-get install --yes --quiet --no-install-recommends git less unzip
+
+  # Install Xdebug PHP Extension
+  MAKEFLAGS="-j$(nproc --ignore=2)" pecl install xdebug
+  docker-php-ext-enable xdebug
+
+  # Configure PHP
+  cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+  echo "memory_limit=1G" >> "$PHP_INI_DIR/php.ini"
+  echo "assert.exception=1" >> "$PHP_INI_DIR/php.ini"
+  echo "error_reporting=E_ALL" >> "$PHP_INI_DIR/php.ini"
+  echo "display_errors=1" >> "$PHP_INI_DIR/php.ini"
+  echo "log_errors=on" >> "$PHP_INI_DIR/php.ini"
+  echo "xdebug.mode=debug" >> "$PHP_INI_DIR/php.ini"
+  echo "xdebug.log_level=0" >> "$PHP_INI_DIR/php.ini"
+EOF
+COPY --link --from=composer/composer:latest-bin /composer /usr/bin/composer
+
+FROM base AS development
 USER dev
 
-FROM base as php82-xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
-USER dev
 
-FROM base as php82-pcov
-RUN pecl install pcov && docker-php-ext-enable pcov
+FROM base AS integration
 USER dev
+COPY --link --chown=1000:1000 ./ /app/
+RUN --mount=type=cache,target=/app/build composer install --classmap-authoritative
